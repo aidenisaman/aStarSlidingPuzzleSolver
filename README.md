@@ -1,94 +1,133 @@
-# Sliding Puzzle Solver
+# N×N Sliding Puzzle Solver
 
-This is a Java implementation of a solver for the n×n sliding puzzle (also known as the n-puzzle or sliding tiles puzzle). The program uses the A* search algorithm with Manhattan distance heuristic to find the optimal solution path.
+This project provides two different implementations of a sliding puzzle solver, each with its own strengths and use cases. Both implementations use variations of the A* search algorithm to find optimal solutions for n×n sliding puzzles.
 
-## Overview
+## Implementations
 
-The sliding puzzle consists of n² - 1 numbered tiles and one blank space arranged in an n×n grid. The goal is to rearrange the tiles from their initial configuration to reach the goal configuration where the tiles are in numerical order with the blank space at the end.
+### 1. Twin-Board Implementation
+Located in `Board.java` and `Solver.java`, this implementation uses a twin board technique for efficient solvability detection and provides comprehensive puzzle management features.
 
-### Features
+### 2. Pure A* Implementation
+Located in `AStarSolver.java` and `PuzzleState.java`, this implementation focuses on memory efficiency and includes segment-based solving capabilities.
 
-- Supports any n×n puzzle size (recommended for 2×2 up to 4×4 for reasonable solving times)
-- Determines if a given puzzle configuration is solvable
-- Finds the optimal (minimum moves) solution path
-- Provides performance metrics (solution time and number of moves)
-- Includes a random puzzle generator
+## Core Classes
 
-## Classes
-
-### Board.java
-- Represents the puzzle board state
-- Implements board operations and metrics:
-  - Manhattan distance calculation
-  - Hamming distance calculation
+### Twin-Board Implementation
+- **Board.java**
+  - Board state representation
+  - Manhattan and Hamming distance calculations
+  - Board operations and comparisons
   - Neighbor state generation
-  - Board comparison and equality checking
 
-### Solver.java
-- Implements the A* search algorithm
-- Uses a priority queue to efficiently find the optimal solution
-- Determines puzzle solvability using the twin board technique
-- Generates the solution path
+- **Solver.java**
+  - A* search with twin board technique
+  - Solution path management
+  - Solvability detection
 
-### Main.java
-- Contains a sample implementation using a predefined 4×4 puzzle
-- Demonstrates basic usage of the solver
+### Pure A* Implementation
+- **PuzzleState.java**
+  - State management and board operations
+  - Manhattan distance calculation
+  - Segment-based solving capability
+  - State comparison utilities
 
-### PuzzleTest.java
-- Provides functionality to generate random solvable puzzles
-- Allows user input for puzzle size
-- Includes timing and performance measurements
+- **AStarSolver.java**
+  - Pure A* search implementation
+  - Efficient state exploration
+  - Solution path reconstruction
 
-## Usage
+### Shared/Utility Classes
+- **Main.java**
+  - Example usage of both implementations
+  - Performance timing
+  - Sample puzzle configurations
 
-### Running the Sample Puzzle
+- **PuzzleTest.java**
+  - Random puzzle generation
+  - User interaction for puzzle size
+  - Testing utilities
+
+## Features
+
+### Common Features
+- Support for any n×n puzzle size
+- Optimal solution path finding
+- Performance metrics
+- Solution visualization
+
+### Twin-Board Implementation Features
+- Guaranteed solvability detection
+- Multiple heuristic options (Manhattan and Hamming)
+- Random puzzle generation
+- Comprehensive testing framework
+
+### Pure A* Implementation Features
+- Memory-efficient state management
+- Segment-based solving capability
+- Streamlined state exploration
+- Efficient duplicate detection
+
+## Usage Examples
+
+### Using Twin-Board Implementation
 ```java
-public static void main(String[] args) {
-    int[][] initialTiles = {
-        {5, 1, 2, 3},
-        {0, 6, 7, 4},
-        {9, 10, 11, 8},
-        {13, 14, 15, 12}
-    };
-    
-    Board initial = new Board(initialTiles);
-    Solver solver = new Solver(initial);
-    
-    if (solver.isSolvable()) {
-        System.out.println("Minimum number of moves = " + solver.moves());
-        for (Board board : solver.solution()) {
-            System.out.println(board);
-        }
-    } else {
-        System.out.println("The puzzle is not solvable.");
+// Create initial board
+int[][] initialTiles = {
+    {5, 1, 2, 3},
+    {0, 6, 7, 4},
+    {9, 10, 11, 8},
+    {13, 14, 15, 12}
+};
+
+Board initial = new Board(initialTiles);
+Solver solver = new Solver(initial);
+
+if (solver.isSolvable()) {
+    System.out.println("Minimum moves = " + solver.moves());
+    for (Board board : solver.solution()) {
+        System.out.println(board);
     }
 }
 ```
 
-### Generating and Solving Random Puzzles
-Run `PuzzleTest.java` and follow the prompts to:
-1. Enter the desired puzzle size (n)
-2. Get a randomly generated solvable puzzle
-3. View the solution path and performance metrics
+### Using Pure A* Implementation
+```java
+int[][] initialBoard = {
+    {5, 1, 2, 3},
+    {0, 6, 7, 4},
+    {9, 10, 11, 8},
+    {13, 14, 15, 12}
+};
 
-## Algorithm Details
+PuzzleState startState = new PuzzleState(initialBoard, null, 0);
+AStarSolver.solve(startState);
+```
 
-The solver uses the A* search algorithm with the following components:
+## Choosing an Implementation
 
-- **Priority Function**: f(n) = g(n) + h(n)
-  - g(n): Number of moves made so far
-  - h(n): Manhattan distance heuristic
-- **Twin Board Technique**: Used to determine puzzle solvability
-- **Manhattan Distance**: Sum of the horizontal and vertical distances of each tile from its goal position
+### Use Twin-Board Implementation When:
+- Solvability detection is crucial
+- Multiple heuristic options are needed
+- Random puzzle generation is required
+- Comprehensive testing is needed
+
+### Use Pure A* Implementation When:
+- Memory efficiency is priority
+- Segment-based solving is beneficial
+- Simpler state management is preferred
+- Quick solution finding is the main goal
 
 ## Performance Considerations
 
-- Time complexity is exponential with respect to the board size
-- Memory usage increases significantly with larger puzzles
-- Recommended puzzle sizes:
-  - 2×2 to 3×3: Solves instantly
-  - 4×4: Typically solves within seconds
-  - 5×5 and larger: May take considerable time and memory
+### Twin-Board Implementation
+- Better for detecting unsolvable puzzles
+- More memory usage due to twin board
+- Additional computation for multiple heuristics
+
+### Pure A* Implementation
+- More efficient memory usage
+- Faster for solvable puzzles
+- Better for larger puzzle sizes
 
 ## Requirements
 
@@ -102,8 +141,45 @@ The solver uses the A* search algorithm with the following components:
 javac *.java
 ```
 
-2. Run either the sample puzzle or random puzzle generator:
+2. Run either implementation:
 ```bash
-java Main     # For sample puzzle
-java PuzzleTest   # For random puzzle generator
+# For Twin-Board implementation with sample puzzle
+java Main
+
+# For random puzzle generation and testing
+java PuzzleTest
 ```
+
+## Implementation Details
+
+### Twin-Board Implementation
+- Uses twin board technique for solvability
+- Maintains two parallel priority queues
+- Implements both Manhattan and Hamming distances
+- Immutable board states
+
+### Pure A* Implementation
+- Single priority queue with HashSet
+- Segment-based solving capability
+- Mutable state management
+- Optimized state comparison
+
+## Future Improvements for Consideration 
+
+- Graphical user interface
+- Parallel solving capabilities
+- Advanced heuristic functions
+- Pattern database support
+- Solution animation
+- Interactive puzzle input
+- Hybrid solving approaches
+
+## Performance Comparison
+
+Both implementations have been tested with various puzzle sizes:
+- 3×3 puzzles: Both solve instantly
+- 4×4 puzzles: Typically solve within seconds
+- 5×5 puzzles: Solving time varies significantly
+- Larger puzzles: Consider memory and time constraints
+
+Choose the implementation that best fits your specific needs based on the factors described above.
